@@ -1,0 +1,10 @@
+__pycache__/
+*.so
+build/
+MANIFEST
+dist/
+venv/
+.idea/
+*.iws
+out/
+.DS_Store
