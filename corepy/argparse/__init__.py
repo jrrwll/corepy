@@ -214,7 +214,7 @@ class ArgParser(_ArgParser):
             self.__key_value_map[key] = [value]
 
     def _add_property(self, key, hkey, hval):
-        if key in self.__key_value_map:
+            if key in self.__key_value_map:
             map = self.__key_value_map[key]
             map[hkey] = hval
         else:

@@ -1,6 +1,7 @@
-from . import Matrix, pascal
-
+from time import perf_counter as pc
 from unittest import TestCase
+
+from corepy.matrix import Matrix, pascal
 
 
 class TestMatrix(TestCase):
@@ -18,7 +19,9 @@ class TestMatrix(TestCase):
         A.data = pascal(i)
         print("before")
         A.pretty()
+        t = pc()
         det = A.det()
+        t = pc() - t
         print("after")
         A.pretty()
-        print("%2d-level pascal det is %.8G" % (i, det))
+        print("%2d-level pascal det is %.8G, cost %.3fus" % (i, det, t * 10 ** 6))

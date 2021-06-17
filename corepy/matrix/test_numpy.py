@@ -1,8 +1,10 @@
-from . import Matrix, pascal
 from time import time
 from unittest import TestCase
+
 import numpy
 from matplotlib.pyplot import plot, show
+
+from corepy.matrix import Matrix, pascal
 
 
 class TestNumpy(TestCase):
@@ -43,7 +45,7 @@ class TestNumpy(TestCase):
             numpy_ts.append(ts2)
 
             print("%2d\t[matrix, numpy] det:\t%.8G, %.8G, cost:\t%.3f, %.3f" % (
-            i, det1, det2, ts1 * 10 ** 6, ts2 * 10 ** 6))
+                i, det1, det2, ts1 * 10 ** 6, ts2 * 10 ** 6))
 
         plot(r, matrix_ts, 'r-', r, numpy_ts, 'g-.')
         show()

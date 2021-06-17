@@ -1,3 +1,5 @@
+from array import array
+
 from .matrices import *
 
 
@@ -6,10 +8,15 @@ class Matrix():
     def __init__(self, dim1, dim2):
         self.dim1 = dim1
         self.dim2 = dim2
-        self.data = [[0 for i in range(dim1)] for j in range(dim2)]
+        # column based
+        self.data = [array('d', [0 for j in range(dim2)]) for i in range(dim1)]
 
-    def __getitem__(self, item):
-        return self.data[item]
+    def __getitem__(self, *args, **kwargs):
+        if isinstance(args, tuple):
+            if len(args) != 2:
+                raise KeyError("__getitem__ expect 2-size tuple but got %d" % len(args))
+            return self.data[args[0]][args[1]]
+        return None
 
     def minDimensions(self):
         return self.dim1 if self.dim1 < self.dim2 else self.dim2
