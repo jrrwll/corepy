@@ -1,4 +1,5 @@
 import enum
+import abc
 
 
 class _ArgFlag(enum.IntEnum):
@@ -28,7 +29,7 @@ class _Argument():
         self.flag = flag
 
 
-class _ArgParser():
+class _ArgParser(abc.ABC):
     """
     the structure is a historical legacy porting from Java,
     so why let it more pythonic ?
@@ -37,8 +38,6 @@ class _ArgParser():
     def __init__(self):
         self.__key_argument_map = {}
         self.__key_value_map = {}
-        self.__values = []
-        self.__names_key_map = {}
 
     def __getitem__(self, key):
         """
@@ -60,21 +59,22 @@ class _ArgParser():
     def __iter__(self):
         return self.__key_value_map.items().__iter__()
 
-    def add_string(self, key, usage, *names):
+    def add_string(self, key, usage: str, *names):
         self.__key_argument_map[key] = _Argument(names, usage, _ArgFlag.STRING)
         return self
 
-    def add_bool(self, key, usage, *names):
+    def add_bool(self, key, usage: str, *names):
         self.__key_argument_map[key] = _Argument(names, usage, _ArgFlag.BOOLEAN)
         return self
 
-    def add_list(self, key, usage, *names):
+    def add_list(self, key, usage: str, *names):
         self.__key_argument_map[key] = _Argument(names, usage, _ArgFlag.LIST)
         return self
 
-    def add_dict(self, key, usage, *names):
+    def add_dict(self, key, usage: str, *names):
         self.__key_argument_map[key] = _Argument(names, usage, _ArgFlag.PROPERTY)
         return self
 
+    @abc.abstractmethod
     def parse(self, args, bsd=False):
         pass

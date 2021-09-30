@@ -1,6 +1,6 @@
 import collections
 
-from corepy.conv import to_list as _to_list
+from corepy import to_list
 from ._ArgParser import _ArgFlag, _ArgParser
 
 
@@ -9,10 +9,11 @@ class ArgParseError(Exception):
 
 
 class ArgParser(_ArgParser):
-    pass
+    __values = []
+    __names_key_map = {}
 
     def parse(self, args, bsd=False):
-        args = _to_list(args)
+        args = to_list(args)
 
         if not args or not len(args):
             return
@@ -43,15 +44,12 @@ class ArgParser(_ArgParser):
             # --rm = true - -type pom
             if arg_name.startswith("--"):
                 self._parse_double_minus(arg_name, shift)
-                continue
             # -P3306, -o yml, -f=%h-%m-%s, -Dlogger.level=debug
             elif arg_name.startswith("-"):
                 self._parse_minus(arg_name, shift)
-                continue
             # extra values
             else:
                 self.__values.append(arg_name)
-                continue
 
         self._init_attr_dict()
 
@@ -154,8 +152,8 @@ class ArgParser(_ArgParser):
         # self.__dict__["_"] = self.__values
         setattr(self, "_", self.__values)
         for k, v in self.__key_value_map.items():
-            setattr(self, k, v)
             # self.__dict__[k] = v
+            setattr(self, k, v)
 
     def _add_all(self, key, argument, value):
         _assert_not_property(argument)
@@ -215,8 +213,8 @@ class ArgParser(_ArgParser):
 
     def _add_property(self, key, hkey, hval):
         if key in self.__key_value_map:
-            map = self.__key_value_map[key]
-            map[hkey] = hval
+            m = self.__key_value_map[key]
+            m[hkey] = hval
         else:
             self.__key_value_map[key] = {hkey: hval}
 
