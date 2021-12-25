@@ -216,20 +216,23 @@ class ArgParser(_ArgParser):
     def _add_property(self, key, hkey, hval):
         if key in self.__key_value_map:
             map = self.__key_value_map[key]
-            map[hkey] = hval
-        else:
-            self.__key_value_map[key] = {hkey: hval}
+        map[hkey] = hval
 
-    def _add_values(self, shift):
-        while len(shift):
-            self.__values.append(shift.pop())
+    else:
+    self.__key_value_map[key] = {hkey: hval}
 
-    def _get_key_or_raise(self, name):
-        if name not in self.__names_key_map:
-            raise ArgParseError()
 
-        key = self.__names_key_map[name]
-        return key, self.__key_argument_map[key]
+def _add_values(self, shift):
+    while len(shift):
+        self.__values.append(shift.pop())
+
+
+def _get_key_or_raise(self, name):
+    if name not in self.__names_key_map:
+        raise ArgParseError()
+
+    key = self.__names_key_map[name]
+    return key, self.__key_argument_map[key]
 
 
 def _assert_not_property(argument):
