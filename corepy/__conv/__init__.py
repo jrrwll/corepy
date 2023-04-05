@@ -1,5 +1,8 @@
+from typing import Optional
+
+
 # translate a tuple, dict, or __iter__ object to list
-def to_list(obj):
+def to_list(obj) -> Optional[list]:
     if obj is list:
         return obj
 

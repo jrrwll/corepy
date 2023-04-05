@@ -5,7 +5,7 @@ from . import ArgParser
 
 class TestArgParse(unittest.TestCase):
     @classmethod
-    def get_parser(self):
+    def get_parser(cls) -> ArgParser:
         parser = ArgParser()
 
         parser.add_string("n", "number flag", "n", "number")
