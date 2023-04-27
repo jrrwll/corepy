@@ -12,9 +12,6 @@ class TestArgParse(unittest.TestCase):
         parser.add_string("P", "port flag", "P", "port")
 
         parser.add_bool("rm", "remove flag", "r", "rm", "remove")
-        parser.add_bool("a", "--", "a")
-        parser.add_bool("u", "--", "u")
-        parser.add_bool("x", "--", "x")
 
         parser.add_list("o", "output flag", "o", "output")
         parser.add_list("H", "header flag", "H", "header")
@@ -25,7 +22,7 @@ class TestArgParse(unittest.TestCase):
         return parser
 
     def test_parse(self):
-        args = "aux -n3 -o yaml -P6379 --rm=true -owide " + \
+        args = "-n3 -o yaml -P6379 --rm=true -owide " + \
                "-H x-opts=gzip -Ffilename=awesome.rb -Ffilemode=777 " + \
                "-R svc ep ds"
 

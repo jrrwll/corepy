@@ -12,7 +12,7 @@ class ArgParser(_ArgParser):
     __values = []
     __names_key_map = {}
 
-    def parse(self, args, bsd=False):
+    def parse(self, args):
         args = to_list(args)
 
         if not args or not len(args):
@@ -25,15 +25,6 @@ class ArgParser(_ArgParser):
             # n, ..., 2, 1
             shift.appendleft(arg)
 
-        # 	handle bsd part
-        # like ps -ef ... or ps aux ...
-        if bsd:
-            arg_name = shift.pop()
-            self._parse_bsd_args(arg_name)
-            if not len(shift):
-                return
-
-        # handle no-bsd part
         # -n default -oyaml --type pom --rm=true --force
         # -Dspring.active.profile=dev -Dlog4j.debug=true
         # -i 1 2 3 --property:key=value extra1 extra2
@@ -52,15 +43,6 @@ class ArgParser(_ArgParser):
                 self.__values.append(arg_name)
 
         self._init_attr_dict()
-
-    def _parse_bsd_args(self, arg_name):
-        if arg_name.startswith("-"):
-            arg_name = arg_name[1:]
-
-        for name in arg_name:
-            key, argument = self._get_key_or_raise(name)
-            _assert_bool(argument)
-            self.__key_value_map[key] = True
 
     def _parse_double_minus(self, arg_name, shift):
         # treat argument behind `--` as extra values

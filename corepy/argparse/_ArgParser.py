@@ -76,5 +76,5 @@ class _ArgParser(abc.ABC):
         return self
 
     @abc.abstractmethod
-    def parse(self, args, bsd=False):
+    def parse(self, args):
         pass
