@@ -30,6 +30,7 @@ dev = [
 [project.optional-dependencies]
 extra = [
     "cryptography>=45.0.7",
+    "pydantic>=2.11.7",
 ]
 
 [tool.mypy]

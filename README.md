@@ -9,5 +9,7 @@
 pip3 install build twine
 
 python3 -m build
+
+# twine upload -r pypiserver dist/*
 twine upload dist/*
 ```
