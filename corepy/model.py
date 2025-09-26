@@ -1,9 +1,11 @@
 import json
-from typing import Any, Dict, Literal, Tuple, Type
+from typing import Any, Dict, Literal, Self, Tuple, Type
 
-from pydantic import BaseModel, Field, ValidationError, create_model
+from pydantic import BaseModel, Field, ValidationError, create_model, ConfigDict
 from pydantic.fields import FieldInfo
 from pydantic_core import ErrorDetails
+
+from corepy.text import camel_to_snake, camel_to_snake_dict, snake_to_camel, snake_to_camel_dict
 
 
 def create_model_type(  # type: ignore[no-untyped-def]
@@ -115,3 +117,55 @@ def get_extra_schema(model_cls: type[BaseModel]) -> dict[str, dict[str, Any]]:
             fields[field_name] = json_schema_extra
 
     return fields
+
+
+# parse_obj parse_raw dict json
+class BaseCamelModel(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=snake_to_camel,
+        populate_by_name=True,
+        str_strip_whitespace=True,
+        str_to_lower=False
+    )
+
+    @classmethod
+    def model_validate_json(cls, json_data: str, **kwargs) -> Self:
+        data = json.loads(json_data)
+        snake_data = camel_to_snake_dict(data)
+        return super().model_validate(snake_data, **kwargs)
+
+    @classmethod
+    def model_validate(cls, obj: Any, **kwargs) -> Self:
+        if isinstance(obj, dict):
+            obj = camel_to_snake_dict(obj)
+        return super().model_validate(obj, **kwargs)
+
+    @classmethod
+    def model_validate_strings(cls, obj: dict[str, str], **kwargs) -> Self:
+        snake_obj = {camel_to_snake(k): v for k, v in obj.items()}
+        return super().model_validate_strings(snake_obj, **kwargs)
+
+    def model_dump(self, **kwargs) -> dict[str, Any]:
+        kwargs.setdefault('by_alias', True)
+        kwargs.setdefault('mode', 'python')
+        return super().model_dump(**kwargs)
+
+    def model_dump_json(self, **kwargs) -> str:
+        kwargs.setdefault('by_alias', True)
+        kwargs.setdefault('ensure_ascii', False)
+        return super().model_dump_json(**kwargs)
+
+    @classmethod
+    def model_construct(cls, **kwargs) -> Self:
+        snake_kwargs = {}
+        for key, value in kwargs.items():
+            snake_key = camel_to_snake(key)
+            snake_kwargs[snake_key] = value
+        return super().model_construct(**snake_kwargs)
+
+    def model_copy(self, **kwargs) -> Self:
+        snake_updates = {}
+        for key, value in kwargs.items():
+            snake_key = camel_to_snake(key) if '_' not in key else key
+            snake_updates[snake_key] = value
+        return super().model_copy(**snake_updates)

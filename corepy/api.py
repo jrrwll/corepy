@@ -9,8 +9,12 @@ class ApiResult[T: BaseModel | JsonValue | None](BaseModel):
     data: T = None
 
     @classmethod
-    def create[R: BaseModel | JsonValue | None](cls, data: R = None) -> "ApiResult[R]":
-        return ApiResult(data=data)
+    def ok[R: BaseModel | JsonValue | None](cls, data: R = None) -> "ApiResult[R]":
+        return cls(data=data)
+
+    @classmethod
+    def error[R: BaseModel | JsonValue | None](cls, e: str | Exception) -> "ApiResult[R]":
+        return cls(err_code='err', err_args=dict(msg=f"{e}"))
 
 
 class IdResult(BaseModel):
