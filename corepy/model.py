@@ -1,11 +1,11 @@
 import json
 from typing import Any, Dict, Literal, Self, Tuple, Type
 
-from pydantic import BaseModel, Field, ValidationError, create_model, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, create_model
 from pydantic.fields import FieldInfo
 from pydantic_core import ErrorDetails
 
-from corepy.text import camel_to_snake, camel_to_snake_dict, snake_to_camel, snake_to_camel_dict
+from corepy.text import camel_to_snake, camel_to_snake_dict, snake_to_camel
 
 
 def create_model_type(  # type: ignore[no-untyped-def]
