@@ -1,17 +1,25 @@
 from abc import ABC
+from typing import Any
 
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Session, func, select
 
 from .api import PageResult
 
-
 class DaoService(ABC):
+
+    def deleted_column[E: SQLModel](self, entity_type: type[E]) -> Any:
+        return entity_type.deleted
+
+    def order_by_clauses[E: SQLModel](self,entity_type: type[E]) -> Any:
+        return entity_type.updated_at.desc()
+
+    # #### #### #### ####    #### #### #### ####    #### #### #### ####
 
     def get_required_entity[E: SQLModel](self, session: Session,
             entity_type: type[E], entity_id: int | str) -> E:
         entity: E = session.get(entity_type, entity_id)
-        if not entity or entity.deleted:
+        if not entity or getattr(entity, self.deleted_column(entity_type).name):
             raise Exception(f"{entity_type} {entity_id} not found")
         return entity
 
@@ -19,7 +27,7 @@ class DaoService(ABC):
             entity_type: type[E], entity_id: int | str) -> None:
         entity = self.get_required_entity(session, entity_type, entity_id)
         update_dict = {
-            'deleted': True,
+            self.deleted_column(entity_type).name: True,
         }
         entity.sqlmodel_update(update_dict)
         session.add(entity)
@@ -31,8 +39,8 @@ class DaoService(ABC):
             self, session: Session, entity_type: type[E],
             page_no: int, page_size: int, model_type: type[M]
     ) -> PageResult[M]:
-        entities, count = self.page_entities(session, entity_type, page_no,
-                                             page_size)
+        entities, count = self.page_entities(
+            session, entity_type, page_no, page_size)
         return PageResult(
             page_no=page_no,
             page_size=page_size,
@@ -45,7 +53,7 @@ class DaoService(ABC):
             page_no: int, page_size: int
     ) -> tuple[list[E], int]:
         conditions = [
-            entity_type.deleted == False,
+            self.deleted_column(entity_type) == False,
         ]
         count_statement = (
             select(func.count()).select_from(entity_type).where(*conditions)
@@ -57,10 +65,11 @@ class DaoService(ABC):
         page_statement = (
             select(entity_type)
             .where(*conditions)
-            .order_by(entity_type.updated_at.desc())
+            .order_by(self.order_by_clauses(entity_type))
             .offset(offset)
             .limit(limit)
         )
+
         entities = session.exec(page_statement).all()
         return entities, count
 

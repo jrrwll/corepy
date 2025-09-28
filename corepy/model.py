@@ -119,14 +119,17 @@ def get_extra_schema(model_cls: type[BaseModel]) -> dict[str, dict[str, Any]]:
     return fields
 
 
+CAMEL_MODEL_CONFIG = ConfigDict(
+    alias_generator=snake_to_camel,
+    populate_by_name=True,
+    str_strip_whitespace=True,
+    str_to_lower=False
+)
+
+
 # parse_obj parse_raw dict json
 class BaseCamelModel(BaseModel):
-    model_config = ConfigDict(
-        alias_generator=snake_to_camel,
-        populate_by_name=True,
-        str_strip_whitespace=True,
-        str_to_lower=False
-    )
+    model_config = CAMEL_MODEL_CONFIG
 
     @classmethod
     def model_validate_json(cls, json_data: str, **kwargs) -> Self:
