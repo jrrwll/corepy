@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import Any
 
 from pydantic import BaseModel
@@ -6,7 +5,7 @@ from sqlmodel import SQLModel, Session, func, select
 
 from .api import PageResult
 
-class DaoService(ABC):
+class DaoService():
 
     def deleted_column[E: SQLModel](self, entity_type: type[E]) -> Any:
         return entity_type.deleted
