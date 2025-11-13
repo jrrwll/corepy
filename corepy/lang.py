@@ -4,23 +4,30 @@ from abc import ABC
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType, UnionType
-from typing import Annotated, Any, Iterable, Type, Union, get_args, get_origin
+from typing import Annotated, Any, Iterable, Self, Type, Union, get_args, \
+    get_origin
 
 
 @dataclass
-class OptionalValue[T: Any]:
+class OptionalValue[T]:
     value: T | None = field(default=None)
 
-    @property
     def is_present(self) -> bool:
         return self.value is not None
 
-    @property
     def is_empty(self) -> bool:
         return self.value is None
 
+    @classmethod
+    def of[T](cls, value: T) -> Self:
+        return cls(value=value)
+
+    @classmethod
+    def empty(cls) -> Self:
+        return cls()
+
     def __repr__(self) -> str:
-        if self.is_present:
+        if self.is_present():
             return f"OptionalValue(value={self.value})"
         else:
             return "OptionalValue(empty)"

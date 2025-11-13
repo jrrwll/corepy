@@ -28,13 +28,6 @@ def create_model_type(  # type: ignore[no-untyped-def]
     )
 
 
-def dump_json(a: Any):
-    if isinstance(a, BaseModel):
-        return json.dumps(a.model_dump(), ensure_ascii=False)
-    else:
-        return json.dumps(a, ensure_ascii=False)
-
-
 # {"a": "{}", "b": "[]"} -> {"a": BaseModel, "b": []}
 def load_and_update_dict(d: dict[str, Any],
         *keys: str, **model_classes: type[BaseModel]) -> None:
@@ -55,8 +48,15 @@ def dump_and_update_dict(d: dict[str, Any], *keys: str) -> None:
     new_dict = {}
     for key in keys:
         if key in d:
-            new_dict[key] = dump_json(d[key])
+            new_dict[key] = _dump_json(d[key])
     d.update(new_dict)
+
+
+def _dump_json(a: Any):
+    if isinstance(a, BaseModel):
+        return json.dumps(a.model_dump(), ensure_ascii=False)
+    else:
+        return json.dumps(a, ensure_ascii=False)
 
 
 def model_validate_dict[T: BaseModel](

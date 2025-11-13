@@ -1,6 +1,7 @@
 import json
 from typing import Any
 import ast
+from .lang import OptionalValue
 
 _safe_globals = {
     "__builtins__": {
@@ -25,15 +26,16 @@ _safe_globals = {
 
 
 # eval main function and return the result
-def eval_main_func(code: str, *args, **kwargs) -> Any:  # type: ignore[no-untyped-def]
+def eval_main_func(code: str, *args, **kwargs) -> OptionalValue[Any]:  # type: ignore[no-untyped-def]
     safe_locals = {}  # type: ignore[var-annotated]
     exec(code, _safe_globals, safe_locals)
 
     main_func = safe_locals.get("main")
     if not main_func:
-        raise Exception("main func undefined")
+        return OptionalValue.empty()
 
-    return main_func(*args, **kwargs)
+    res = main_func(*args, **kwargs)
+    return OptionalValue.of(res)
 
 
 def eval_code(code: str, **kwargs) -> Any:

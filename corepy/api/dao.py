@@ -3,7 +3,7 @@ from typing import Any
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Session, func, select
 
-from .api import PageResult
+from .result import PageResult
 
 class DaoService():
 
