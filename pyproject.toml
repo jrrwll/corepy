@@ -36,6 +36,9 @@ extra = [
     "sqlmodel>=0.0.25",
 ]
 
+[tool.setuptools.package-data]
+"corepy" = ["py.typed"]
+
 [tool.mypy]
 strict = true
 exclude = ["venv", ".venv", "alembic", "corepy/tests/.*"]
