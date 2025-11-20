@@ -3,13 +3,17 @@ from typing import Literal
 
 import jwt
 from jwt.exceptions import InvalidTokenError
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 
 # https://datatracker.ietf.org/doc/html/rfc7519
 class JwtPayload(BaseModel):
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
+
     subject: str = Field(alias="sub")
-    expired_at: datetime = Field(alias="exp")
+    expired_at: float = Field(alias="exp")
 
 
 class JwtProvider:
@@ -23,8 +27,9 @@ class JwtProvider:
     def create_access_token(
             self, subject: str,
             expire_delta: timedelta) -> str:
-        expire = datetime.now(timezone.utc) + expire_delta
-        payload = JwtPayload(subject=subject, expired_at=expire)
+        expired_at = datetime.now(timezone.utc) + expire_delta
+
+        payload = JwtPayload(subject=subject, expired_at=expired_at.timestamp())
         return self.encode_access_token(payload)
 
     def encode_access_token(self, payload: JwtPayload) -> str:
